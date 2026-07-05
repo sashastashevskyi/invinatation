@@ -85,8 +85,7 @@ body::after{
   position:fixed; inset:0;
   z-index:90;
   pointer-events:none;
-  opacity:.055;
-  mix-blend-mode:overlay;
+  opacity:.045;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -251,7 +250,10 @@ body::after{
 .cinema{ position:relative; }
 .chapter{
   position:sticky; top:0;
-  height:100dvh;
+  /* svh замість dvh: висота НЕ змінюється, коли на телефоні
+     ховається/з'являється адресний рядок, тому сцени не смикаються */
+  height:100vh;
+  height:100svh;
   overflow:hidden;
   display:flex; flex-direction:column; justify-content:flex-end;
 }
@@ -789,7 +791,8 @@ body.is-ready .hero-names .line:nth-child(3) .inner{ animation-delay:.22s; }
    ============================================================ */
 .finale{
   position:relative;
-  min-height:92dvh;
+  min-height:92vh;
+  min-height:92svh;
   display:flex; align-items:flex-end;
   overflow:hidden;
 }
@@ -1227,10 +1230,13 @@ function ukPlural(n, one, few, many){
   return many;
 }
 
+let cdOnScreen = false;
+
 function rollTo(el, val){
   if (el.dataset.v === val) return;
   el.dataset.v = val;
-  if (reduceMotion){ el.textContent = val; return; }
+  // анімуємо «прокрутку» цифр лише коли таймер видно на екрані
+  if (reduceMotion || !cdOnScreen){ el.textContent = val; return; }
   const out = el.animate(
     [{ transform:'translateY(0)', opacity:1 }, { transform:'translateY(-14px)', opacity:0 }],
     { duration:160, easing:'ease-in' }
@@ -1275,6 +1281,9 @@ function tick(){
   cdEls.m[1].textContent = ukPlural(m,'хвилина','хвилини','хвилин');
   cdEls.s[1].textContent = ukPlural(s,'секунда','секунди','секунд');
 }
+new IntersectionObserver(([e]) => { cdOnScreen = e.isIntersecting; }, { threshold:.1 })
+  .observe(document.querySelector('.chapter--dark'));
+
 tick();
 const cdTimer = setInterval(tick, 1000);
 
