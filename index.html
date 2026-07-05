@@ -55,7 +55,7 @@ html{
   scroll-behavior:smooth;
   scroll-padding-top:calc(var(--nav-h) + 10px);
 }
-html, body{ overflow-x:clip; }
+html, body{ overflow-x:clip; overflow-anchor:none; }
 
 body{
   font-family:var(--font-body);
@@ -273,7 +273,9 @@ body::after{
 .chapter-content{
   position:relative; z-index:2;
   color:var(--linen);
-  padding:0 1.6rem calc(clamp(5.5rem, 13vh, 8rem) + var(--safe-b));
+  /* фіксований відступ у rem: не залежить від висоти в'юпорта,
+     тому текст не рухається, коли браузер ховає адресний рядок */
+  padding:0 1.6rem calc(6.5rem + var(--safe-b));
   width:min(760px, 100%);
   margin-inline:auto;
 }
@@ -391,7 +393,7 @@ body.is-ready .hero-names .line:nth-child(3) .inner{ animation-delay:.22s; }
     width:100%;
     max-width:none;
     padding-left:clamp(3.5rem, 8vw, 8rem);
-    padding-bottom:calc(clamp(4.5rem, 11vh, 7rem) + var(--safe-b));
+    padding-bottom:calc(5.5rem + var(--safe-b));
   }
   .chapter-content:not(.chapter-content--center) p{ max-width:38ch; }
   .chapter:not(.hero):not(.chapter--dark) .chapter-scrim{
@@ -1403,33 +1405,17 @@ document.getElementById('deckNext').addEventListener('click', () => advanceDeck(
 document.getElementById('deckPrev').addEventListener('click', () => advanceDeck(-1));
 
 /* ============================================================
-   ДОДАТИ В КАЛЕНДАР (.ics)
+   ДОДАТИ В КАЛЕНДАР (Google Calendar, працює на всіх телефонах)
    ============================================================ */
 document.getElementById('icsBtn').addEventListener('click', () => {
   vibrate(8);
-  const ics = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//Wedding//O&M//UK',
-    'BEGIN:VEVENT',
-    'UID:wedding-oleksandr-mariia-2026@invite',
-    'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g,'').split('.')[0] + 'Z',
-    'DTSTART;TZID=Europe/Berlin:' + EVENT.start,
-    'DTEND;TZID=Europe/Berlin:' + EVENT.end,
-    'SUMMARY:' + EVENT.title,
-    'DESCRIPTION:Збір гостей о 14:00. Церемонія о 14:30.',
-    'LOCATION:' + EVENT.locationName.replace(/,/g,'\\,'),
-    'END:VEVENT',
-    'END:VCALENDAR'
-  ].join('\r\n');
-  const blob = new Blob([ics], { type:'text/calendar;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'wedding-oleksandr-mariia.ics';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(a.href);
+  const url = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+    + '&text=' + encodeURIComponent(EVENT.title)
+    + '&dates=' + EVENT.start + '/' + EVENT.end
+    + '&ctz=Europe/Berlin'
+    + '&details=' + encodeURIComponent('Збір гостей о 14:00. Церемонія о 14:30.')
+    + '&location=' + encodeURIComponent(EVENT.locationName);
+  window.open(url, '_blank', 'noopener');
 });
 
 /* ============================================================
