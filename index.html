@@ -887,6 +887,10 @@ footer .monogram{
 </head>
 
 <body class="is-locked">
+  <audio id="bgMusic" preload="auto" loop>
+    <source src="Track1.m4a" type="audio/mp4">
+    <source src="Track1.mp3" type="audio/mpeg">
+  </audio>
 <a class="skip-link" href="#main">Перейти до змісту</a>
 <div class="progress" aria-hidden="true"></div>
 
@@ -1237,6 +1241,7 @@ const vibrate = (ms) => { try{ navigator.vibrate?.(ms); }catch(e){} };
 const preloader = document.getElementById('preloader');
 
 function finishPreloader(){
+  bgMusic.play().catch(() => {});
   if (document.body.classList.contains('is-ready')) return;
   document.body.classList.add('is-ready');
   document.body.classList.remove('is-locked');
@@ -1252,6 +1257,24 @@ if (reduceMotion){
   setTimeout(finishPreloader, 1700);
   preloader.addEventListener('click', finishPreloader);
 }
+
+/* ==========================
+   ФОНОВА МУЗИКА
+========================== */
+
+const bgMusic = document.getElementById('bgMusic');
+
+bgMusic.volume = 0.35;
+
+// Запускаємо після першого натискання
+function startMusic() {
+    bgMusic.play().catch(() => {});
+    document.removeEventListener('click', startMusic);
+    document.removeEventListener('touchstart', startMusic);
+}
+
+document.addEventListener('click', startMusic, { once: true });
+document.addEventListener('touchstart', startMusic, { once: true });
 
 /* ============================================================
    ЗВОРОТНИЙ ВІДЛІК: плавна «прокрутка» цифр
