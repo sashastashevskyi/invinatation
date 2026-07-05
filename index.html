@@ -11,6 +11,10 @@
 <meta property="og:image" content="img-web/img_5008.jpg">
 <meta name="theme-color" content="#4A342A">
 
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -105,23 +109,18 @@ body::after{
 
 /* ============================================================
    ЛІНІЯ ПРОГРЕСУ ПРОКРУТКИ
+   Керується JS (transform у rAF) — стабільно в усіх браузерах,
+   на відміну від CSS scroll-timeline, який смикається у Chrome,
+   коли ховається адресний рядок.
    ============================================================ */
-.progress{ display:none; }
-@supports (animation-timeline: scroll()){
-  @media (prefers-reduced-motion: no-preference){
-    .progress{
-      display:block;
-      position:fixed; top:0; left:0; z-index:210;
-      width:100%; height:3px;
-      background:linear-gradient(90deg, var(--camel), var(--cocoa));
-      transform-origin:left;
-      transform:scaleX(0);
-      will-change:transform;
-      animation:progressGrow linear both;
-      animation-timeline:scroll(root);
-    }
-    @keyframes progressGrow{ to{ transform:scaleX(1); } }
-  }
+.progress{
+  position:fixed; top:0; left:0; z-index:210;
+  width:100%; height:3px;
+  background:linear-gradient(90deg, var(--camel), var(--cocoa));
+  transform:scaleX(0);
+  transform-origin:left;
+  will-change:transform;
+  transition:transform .12s linear;
 }
 
 /* ============================================================
@@ -182,13 +181,26 @@ body::after{
   backdrop-filter:blur(18px) saturate(160%);
   box-shadow:0 1px 0 rgba(74,52,42,.08);
 }
-.nav-inner{ display:flex; align-items:center; justify-content:space-between; }
+.nav-inner{ display:flex; align-items:center; justify-content:space-between; gap:1rem; }
 .nav-logo{
+  display:flex; align-items:center; gap:.6rem;
   font-family:var(--font-display);
   font-size:1.4rem; font-weight:600;
   text-decoration:none;
+  flex:none;
 }
 .nav-logo .amp{ font-style:italic; color:var(--cocoa); }
+.nav-right{ display:flex; align-items:center; gap:1.1rem; flex:none; }
+.nav-date{
+  font-size:.8rem; font-weight:700;
+  letter-spacing:.16em;
+  color:var(--cocoa);
+  opacity:0;
+  transform:translateY(-4px);
+  transition:opacity .6s var(--ease), transform .6s var(--ease);
+  pointer-events:none;
+}
+body.show-nav-date .nav-date{ opacity:1; transform:none; }
 .nav-cta-mini{
   display:none;
   background:var(--espresso); color:var(--linen);
@@ -215,20 +227,27 @@ body::after{
    ПЛАВАЮЧА ПАНЕЛЬ ДІЙ (мобільний патерн)
    ============================================================ */
 .actionbar{
-  position:fixed; left:50%; bottom:calc(var(--safe-b) + 14px);
+  position:fixed; left:50%; bottom:calc(var(--safe-b) + 22px);
   z-index:205;
-  transform:translate(-50%, 140%);
+  /* ховаємо глибоко за край (разом із тінню), щоб під час появи
+     її не було видно завчасно на жодному браузері */
+  transform:translate(-50%, 300%);
   display:flex; align-items:center; gap:.5rem;
   padding:.45rem;
   border-radius:999px;
-  background:rgba(74,52,42,.78);
+  background:rgba(74,52,42,.82);
   -webkit-backdrop-filter:blur(20px) saturate(160%);
   backdrop-filter:blur(20px) saturate(160%);
   border:1px solid rgba(245,241,234,.14);
   box-shadow:0 24px 60px -18px rgba(74,52,42,.7), inset 0 1px 0 rgba(245,241,234,.12);
-  transition:transform .6s var(--ease);
+  transition:transform .5s var(--ease), visibility 0s linear .5s;
+  visibility:hidden;
 }
-.actionbar.is-shown{ transform:translate(-50%, 0); }
+.actionbar.is-shown{
+  transform:translate(-50%, 0);
+  visibility:visible;
+  transition:transform .5s var(--ease), visibility 0s;
+}
 .ab-primary{
   display:inline-block;
   background:var(--linen); color:var(--espresso);
@@ -881,14 +900,17 @@ footer .monogram{
 <!-- НАВІГАЦІЯ -->
 <header class="nav" id="nav">
   <div class="container nav-inner">
-    <a class="nav-logo" href="#top" aria-label="На початок">О<span class="amp">&</span>М</a>
+    <a class="nav-logo" href="#top" aria-label="Олександр і Марія, на початок">О<span class="amp">&</span>М</a>
     <ul class="nav-links">
       <li><a href="#details">Деталі</a></li>
       <li><a href="#program">Програма</a></li>
       <li><a href="#gallery">Моменти</a></li>
       <li><a href="#rsvp">Підтвердити</a></li>
     </ul>
-    <a class="nav-cta-mini" href="#rsvp">Підтвердити</a>
+    <div class="nav-right">
+      <span class="nav-date" aria-hidden="true">18.09.2026</span>
+      <a class="nav-cta-mini" href="#rsvp">Підтвердити</a>
+    </div>
   </div>
 </header>
 
@@ -923,8 +945,6 @@ footer .monogram{
       </h1>
     </div>
   </section>
-  <!-- маркер у потоці: коли він іде за верх екрана, показуємо панель дій -->
-  <div id="barTrigger" aria-hidden="true" style="height:1px;margin-top:-1px;pointer-events:none;"></div>
 
   <!-- Сцена 2: ЗАПРОШЕННЯ + ТАЙМЕР -->
   <section class="chapter chapter--dark" aria-label="Запрошення та зворотний відлік">
@@ -1314,37 +1334,56 @@ if (!reduceMotion){
   document.querySelectorAll('.reveal').forEach(el => el.classList.add('is-visible'));
 }
 
+/* ============================================================
+   ЄДИНИЙ SCROLL-ОБРОБНИК (passive + rAF)
+   Керує повзунком прогресу, склом навбару, датою в меню та
+   панеллю дій. Один обробник з батчингом через requestAnimationFrame
+   поводиться однаково в Safari, Chrome та вбудованому браузері Telegram,
+   на відміну від CSS scroll-timeline та кількох IntersectionObserver,
+   які в цих браузерах спрацьовували по-різному.
+   ============================================================ */
 const nav = document.getElementById('nav');
-const heroChapter = document.querySelector('.hero');
-new IntersectionObserver(([e]) => {
-  nav.classList.toggle('is-scrolled', !e.isIntersecting);
-}, { threshold:.05 }).observe(heroChapter);
-
-/* панель дій: показуємо, коли маркер після hero пішов за верх екрана,
-   ховаємо на RSVP та фіналі.
-   (сцени кіно — sticky, тому сам hero лишається у в'юпорті весь стек;
-    надійно відстежувати саме маркер у потоці, а не hero) */
+const progressBar = document.querySelector('.progress');
 const actionbar = document.getElementById('actionbar');
-const barTrigger = document.getElementById('barTrigger');
-let pastHero = false, onQuietZone = false;
+const storyScene = document.querySelectorAll('.chapter')[2]; // «Пригоди»
+const detailsSection = document.getElementById('details');
+const rsvpSection = document.getElementById('rsvp');
 
-function updateBar(){
-  actionbar.classList.toggle('is-shown', pastHero && !onQuietZone);
+let ticking = false;
+function onScroll(){
+  if (ticking) return;
+  ticking = true;
+  requestAnimationFrame(() => {
+    const doc = document.documentElement;
+    const st = window.pageYOffset || doc.scrollTop || 0;
+    const vh = window.innerHeight;
+    const max = (doc.scrollHeight - vh) || 1;
+
+    // повзунок прогресу
+    const p = Math.min(1, Math.max(0, st / max));
+    progressBar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+
+    // скло навбару після першого екрана
+    nav.classList.toggle('is-scrolled', st > vh * 0.55);
+
+    // дата в меню з'являється з сегмента «Пригоди»
+    document.body.classList.toggle('show-nav-date',
+      storyScene.getBoundingClientRect().top < vh * 0.5);
+
+    // панель дій: від секції «Коли та де», ховається на RSVP і далі
+    const reachedDetails = detailsSection.getBoundingClientRect().top < vh * 0.55;
+    const reachedRsvp = rsvpSection.getBoundingClientRect().top < vh * 0.6;
+    actionbar.classList.toggle('is-shown', reachedDetails && !reachedRsvp);
+
+    ticking = false;
+  });
 }
-new IntersectionObserver(([e]) => {
-  // маркер вище верху екрана => користувач прогорнув перший екран
-  pastHero = e.boundingClientRect.top < 4;
-  updateBar();
-}, { threshold:0 }).observe(barTrigger);
-
-const quiet = new IntersectionObserver((entries) => {
-  entries.forEach(e => { quiet._map.set(e.target, e.isIntersecting); });
-  onQuietZone = [...quiet._map.values()].some(Boolean);
-  updateBar();
-}, { threshold:.14 });
-quiet._map = new Map();
-quiet.observe(document.getElementById('rsvp'));
-quiet.observe(document.querySelector('.finale'));
+window.addEventListener('scroll', onScroll, { passive:true });
+window.addEventListener('resize', onScroll, { passive:true });
+if (window.visualViewport){
+  visualViewport.addEventListener('resize', onScroll, { passive:true });
+}
+onScroll();
 
 /* ============================================================
    СВАЙП-КОЛОДА (адаптовано з 21st.dev Image Swiper під vanilla)
