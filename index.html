@@ -6,7 +6,7 @@
 <title>Олександр & Марія — Весілля 18 вересня 2026</title>
 <meta name="description" content="Запрошення на весілля Олександра та Марії. 18 вересня 2026 року. Підтвердіть свою присутність онлайн.">
 <meta property="og:title" content="Олександр & Марія — 18.09.2026">
-<meta property="og:description" content="Запрошуємо вас розділити з нами найважливіший день нашого життя.">
+<meta property="og:description" content="Запрошуємо тебе розділити з нами найважливіший день нашого життя.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="img-web/img_5008.jpg">
 <meta name="theme-color" content="#4A342A">
@@ -192,7 +192,7 @@ body::after{
 .nav-logo .amp{ font-style:italic; color:var(--cocoa); }
 .nav-right{ display:flex; align-items:center; gap:1.1rem; flex:none; }
 .nav-date{
-  font-size:.8rem; font-weight:700;
+  font-size:.85rem; font-weight:700;
   letter-spacing:.16em;
   color:var(--cocoa);
   opacity:0;
@@ -212,6 +212,25 @@ body.show-nav-date .nav-date{ opacity:1; transform:none; }
 }
 .nav-cta-mini:hover{ background:var(--cocoa); }
 .nav-cta-mini:active{ transform:scale(.96); }
+
+.nav-sound{
+  display:grid; place-items:center;
+  width:38px; height:38px;
+  border-radius:999px;
+  border:1.5px solid rgba(74,52,42,.22);
+  background:transparent;
+  color:var(--cocoa);
+  cursor:pointer;
+  flex:none;
+  transition:background .25s, border-color .25s, transform .2s var(--ease);
+}
+.nav-sound:hover{ background:rgba(178,150,125,.14); border-color:var(--camel); }
+.nav-sound:active{ transform:scale(.92); }
+.nav-sound svg{ width:17px; height:17px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.nav-sound .icon-on{ display:none; }
+.nav-sound .icon-off{ display:block; }
+.nav-sound.is-on .icon-on{ display:block; }
+.nav-sound.is-on .icon-off{ display:none; }
 .nav-links{
   display:none;
   list-style:none; gap:2rem;
@@ -254,7 +273,7 @@ body.show-nav-date .nav-date{ opacity:1; transform:none; }
   padding:.75rem 1.6rem;
   border-radius:999px;
   text-decoration:none;
-  font-size:.95rem; font-weight:700;
+  font-size:1rem; font-weight:700;
   transition:transform .2s var(--ease), background .2s;
 }
 .ab-primary:active{ transform:scale(.96); }
@@ -316,10 +335,20 @@ body.show-nav-date .nav-date{ opacity:1; transform:none; }
   font-size:clamp(2.4rem, 9vw, 4.5rem);
   margin-bottom:.7rem;
 }
+
+/* На мобільному пара на фото цитати стоїть праворуч від центру,
+   тому підпис-атрибуцію трохи зміщуємо вліво, щоб не лягати на обличчя.
+   Сама цитата (h2) лишається по центру. На десктопі простору достатньо. */
+@media (max-width:899px){
+  .quote-chapter .chapter-content--center p{
+    transform:translateX(-22%);
+  }
+}
 .chapter-content p{
   max-width:46ch;
   color:var(--cocoa);
-  font-size:1.02rem;
+  font-size:clamp(1.15rem, 3.4vw, 1.35rem);
+  line-height:1.55;
   font-weight:500;
 }
 
@@ -367,19 +396,6 @@ body.is-ready .hero-names .inner{ animation:riseUp 1s var(--ease) forwards; }
 body.is-ready .hero-names .line:nth-child(2) .inner{ animation-delay:.12s; }
 body.is-ready .hero-names .line:nth-child(3) .inner{ animation-delay:.22s; }
 @keyframes riseUp{ to{ transform:translateY(0); } }
-
-.hero-bottom{
-  position:relative; z-index:2;
-  text-align:center;
-  color:var(--linen);
-  padding-bottom:calc(2rem + var(--safe-b));
-}
-.hero-bottom p{
-  max-width:30ch; margin-inline:auto;
-  font-size:1rem; font-weight:500;
-  color:rgba(245,241,234,.95);
-  text-shadow:0 1px 18px rgba(74,52,42,.5);
-}
 /* повільний кінематографічний зум фото */
 @media (prefers-reduced-motion: no-preference){
   .hero .chapter-bg img{
@@ -472,7 +488,7 @@ body.is-ready .hero-names .line:nth-child(3) .inner{ animation-delay:.22s; }
 }
 .cd-label{
   margin-top:.4rem;
-  font-size:.75rem; font-weight:600;
+  font-size:.8rem; font-weight:600;
   letter-spacing:.24em; text-transform:uppercase;
   color:var(--camel);
 }
@@ -610,7 +626,7 @@ body.is-ready .hero-names .line:nth-child(3) .inner{ animation-delay:.22s; }
 .swatch{
   width:88px;
   text-align:center;
-  font-size:.75rem; font-weight:700;
+  font-size:.8rem; font-weight:700;
   letter-spacing:.08em;
   color:var(--cocoa);
 }
@@ -768,7 +784,7 @@ body.is-ready .hero-names .line:nth-child(3) .inner{ animation-delay:.22s; }
   padding:.95rem .8rem;
   border-radius:1rem;
   border:1.5px solid rgba(215,201,184,.35);
-  font-weight:700; font-size:.95rem;
+  font-weight:700; font-size:1rem;
   transition:background .3s, border-color .3s, color .3s, transform .2s var(--ease);
 }
 .choice input:active + span{ transform:scale(.97); }
@@ -912,6 +928,10 @@ footer .monogram{
       <li><a href="#rsvp">Підтвердити</a></li>
     </ul>
     <div class="nav-right">
+      <button class="nav-sound" id="soundToggle" type="button" aria-pressed="false" aria-label="Увімкнути музику">
+        <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.4 8.6a5 5 0 0 1 0 6.8"/><path d="M19 6a8.5 8.5 0 0 1 0 12"/></svg>
+        <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>
+      </button>
       <span class="nav-date" aria-hidden="true">18.09.2026</span>
       <a class="nav-cta-mini" href="#rsvp">Підтвердити</a>
     </div>
@@ -953,7 +973,7 @@ footer .monogram{
   <!-- Сцена 2: ЗАПРОШЕННЯ + ТАЙМЕР -->
   <section class="chapter chapter--dark" aria-label="Запрошення та зворотний відлік">
     <div class="container">
-      <p class="countdown-invite">Запрошуємо вас розділити з нами найважливіший день нашого життя</p>
+      <p class="countdown-invite">Запрошуємо тебе розділити з нами найважливіший день нашого життя</p>
       <p class="countdown-title">до дня, коли ми станемо сім'єю</p>
       <div class="countdown-grid" role="timer" aria-live="off">
         <div><span class="cd-value" id="cdDays">000</span><div class="cd-label" id="cdDaysLabel">днів</div></div>
@@ -972,8 +992,11 @@ footer .monogram{
     </div>
     <div class="chapter-scrim"></div>
     <div class="chapter-content">
-      <h2>Пригоди</h2>
-      <p>Кожна ситуація, момент, слово чи секунда. Не важливо, цікава, важка чи нестандартна. Головне: разом.</p>
+      <h2>Шлях</h2>
+      <p>За милями хвилями метрами<br>
+      В океанах думок вітрилами<br>
+      Як ті кораблі у плаванні<br>
+      Що чекають спільної гавані</p>
     </div>
   </section>
 
@@ -1002,7 +1025,7 @@ footer .monogram{
   </section>
 
   <!-- Сцена 6: цитата -->
-  <section class="chapter" aria-label="Цитата">
+  <section class="chapter quote-chapter" aria-label="Цитата">
     <div class="chapter-bg">
       <img src="img-web/img_5013.jpg" alt="Пара стоїть удалині під кроною дерева над гірською долиною" width="1400" height="2100" loading="lazy" decoding="async" style="object-position:center 62%">
     </div>
@@ -1023,14 +1046,12 @@ footer .monogram{
       <ul class="details-list reveal" style="--d:.1s">
         <li><span class="k">Дата</span><span class="v">П'ятниця, 18 вересня 2026</span></li>
         <li><span class="k">Збір гостей</span><span class="v">14:00</span></li>
-        <li><span class="k">Церемонія</span><span class="v">14:30</span></li>
         <li><span class="k">Локація</span><span class="v">Бінц, острів Рюген<br>Німеччина</span></li>
-        <li><span class="k">Дрес-код</span><span class="v">Тепла палітра вечора, деталі нижче</span></li>
         <li><span class="k">Трансляція</span><span class="v">Посилання з'явиться тут<br>за 24 години до початку</span></li>
       </ul>
     </div>
     <div class="details-media reveal" style="--d:.2s">
-      <img src="img-web/img_5014.jpg" alt="Чорно-біле фото: закохані тримаються за руки, на пальці Марії каблучка" width="1400" height="2100" loading="lazy" decoding="async">
+      <img src="img-web/img_9099.jpg" alt="Чорно-біле фото: Олександр кружляє Марію в обіймах на вершині гори" width="1400" height="2100" loading="lazy" decoding="async">
     </div>
   </div>
 </section>
@@ -1049,7 +1070,7 @@ footer .monogram{
       </article>
       <article class="program-card program-card--tint reveal" style="--d:.05s">
         <div class="t">14:30</div><h3>Церемонія</h3>
-        <p>Найголовніші слова. Будь ласка, не запізнюйтесь.</p>
+        <p>Найголовніші слова. Будь ласка, не запізнюйся.</p>
       </article>
       <article class="program-card has-photo reveal" style="--d:.1s">
         <div class="photo"><img src="img-web/img_5006.jpg" alt="" width="1400" height="2100" loading="lazy" decoding="async"></div>
@@ -1075,7 +1096,7 @@ footer .monogram{
   <div class="container" style="text-align:center;">
     <div class="section-head" style="margin-bottom:0;">
       <h2 class="reveal">Дрес-код</h2>
-      <p class="lede reveal" style="--d:.1s">Будемо вдячні, якщо ваші образи підтримають теплу палітру нашого вечора. Обирайте будь-який із цих відтінків.</p>
+      <p class="lede reveal" style="--d:.1s">Будемо вдячні, якщо твій образ підтримає теплу палітру нашого вечора. Обирай будь-який із цих відтінків.</p>
     </div>
     <div class="palette reveal" style="--d:.2s" role="img" aria-label="Палітра дрес-коду: лляний, бежевий, карамельний, какао та еспресо відтінки">
       <div class="swatch"><i style="background:#F5F1EA"></i>Linen</div>
@@ -1122,19 +1143,19 @@ footer .monogram{
     <div class="rsvp-intro">
       <span class="eyebrow reveal">RSVP</span>
       <h2 class="reveal" style="--d:.08s">Будемо раді бачити саме тебе</h2>
-      <p class="reveal" style="--d:.16s">Будь ласка, підтвердіть свою присутність до 18 серпня 2026 року. Це допоможе нам подбати про кожного гостя.</p>
+      <p class="reveal" style="--d:.16s">Будь ласка, підтверди свою присутність до 18 серпня 2026 року. Це допоможе нам подбати про кожного гостя.</p>
     </div>
 
     <div>
       <form id="rsvpForm" novalidate>
         <div class="field" id="fieldName">
-          <label for="guestName">Ваше ім'я та прізвище <span class="req" aria-hidden="true">*</span></label>
+          <label for="guestName">Твоє ім'я та прізвище <span class="req" aria-hidden="true">*</span></label>
           <input type="text" id="guestName" name="name" autocomplete="name" placeholder="Наприклад: Андрій Коваленко" required>
-          <p class="field-error">Будь ласка, вкажіть ваше ім'я.</p>
+          <p class="field-error">Будь ласка, вкажи своє ім'я.</p>
         </div>
 
         <div class="field" id="fieldAttend">
-          <label id="attendLegend">Чи будете ви з нами? <span class="req" aria-hidden="true">*</span></label>
+          <label id="attendLegend">Чи будеш ти з нами? <span class="req" aria-hidden="true">*</span></label>
           <div class="choice-row" role="radiogroup" aria-labelledby="attendLegend">
             <label class="choice">
               <input type="radio" name="attendance" value="yes" required>
@@ -1145,7 +1166,7 @@ footer .monogram{
               <span>На жаль, ні</span>
             </label>
           </div>
-          <p class="field-error">Оберіть один із варіантів.</p>
+          <p class="field-error">Обери один із варіантів.</p>
         </div>
 
         <div class="field">
@@ -1186,7 +1207,7 @@ footer .monogram{
 
       <div class="rsvp-success" id="rsvpSuccess" tabindex="-1">
         <h3>Дякуємо!</h3>
-        <p>Ваша відповідь збережена. Ми дуже чекаємо на зустріч 18 вересня 2026 року.</p>
+        <p>Твоя відповідь збережена. Ми дуже чекаємо на зустріч 18 вересня 2026 року.</p>
       </div>
     </div>
   </div>
@@ -1235,6 +1256,37 @@ const WEDDING_DATE = new Date('2026-09-18T14:30:00+02:00');
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const vibrate = (ms) => { try{ navigator.vibrate?.(ms); }catch(e){} };
 
+/* ==========================
+   ФОНОВА МУЗИКА (грає по колу; кнопка в меню — єдине джерело стану)
+========================== */
+const bgMusic = document.getElementById('bgMusic');
+const soundToggle = document.getElementById('soundToggle');
+bgMusic.volume = 0.35;
+
+function syncSoundUI(){
+  const playing = !bgMusic.paused;
+  soundToggle.classList.toggle('is-on', playing);
+  soundToggle.setAttribute('aria-pressed', String(playing));
+  soundToggle.setAttribute('aria-label', playing ? 'Вимкнути музику' : 'Увімкнути музику');
+}
+bgMusic.addEventListener('play', syncSoundUI);
+bgMusic.addEventListener('pause', syncSoundUI);
+syncSoundUI();
+
+// Мобільні браузери (включно з Safari та вбудованим браузером Telegram)
+// дозволяють play() лише як пряму реакцію на дію користувача.
+// Тому пробуємо запустити музику на перший-ліпший дотик/клік будь-де на сторінці.
+function tryAutoStart(){
+  bgMusic.play().catch(() => {});
+}
+document.addEventListener('click', tryAutoStart, { once:true });
+document.addEventListener('touchstart', tryAutoStart, { once:true, passive:true });
+
+soundToggle.addEventListener('click', () => {
+  if (bgMusic.paused) bgMusic.play().catch(() => {});
+  else bgMusic.pause();
+});
+
 /* ============================================================
    ПРЕЛОАДЕР
    ============================================================ */
@@ -1257,24 +1309,6 @@ if (reduceMotion){
   setTimeout(finishPreloader, 1700);
   preloader.addEventListener('click', finishPreloader);
 }
-
-/* ==========================
-   ФОНОВА МУЗИКА
-========================== */
-
-const bgMusic = document.getElementById('bgMusic');
-
-bgMusic.volume = 0.35;
-
-// Запускаємо після першого натискання
-function startMusic() {
-    bgMusic.play().catch(() => {});
-    document.removeEventListener('click', startMusic);
-    document.removeEventListener('touchstart', startMusic);
-}
-
-document.addEventListener('click', startMusic, { once: true });
-document.addEventListener('touchstart', startMusic, { once: true });
 
 /* ============================================================
    ЗВОРОТНИЙ ВІДЛІК: плавна «прокрутка» цифр
@@ -1649,7 +1683,7 @@ form.addEventListener('submit', async (e) => {
     successEl.classList.add('is-shown');
     if (payload.attendance === 'Не зможе прийти'){
       successEl.querySelector('p').textContent =
-        'Нам шкода, що ви не зможете бути з нами. Дякуємо, що попередили, ми вас обіймаємо!';
+        'Нам шкода, що ти не зможеш бути з нами. Дякуємо, що попередив(-ла), ми тебе обіймаємо!';
     } else {
       petalBurst();
     }
